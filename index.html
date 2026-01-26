@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Forge</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b,#334155);color:#e2e8f0;min-height:100vh;padding:20px;cursor:default}
+.cursor-bubble{display:none}
+.container{max-width:1600px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+.header{background:rgba(30,41,59,.9);backdrop-filter:blur(10px);border:1px solid rgba(148,163,184,.2);border-radius:20px;padding:30px;margin-bottom:30px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:slideDown .8s;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:3px;background:linear-gradient(90deg,transparent,#06b6d4,#3b82f6,#8b5cf6,#ec4899,transparent);animation:runningLine 3s linear infinite}
+@keyframes runningLine{to{left:100%}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideFromLeft{from{opacity:0;transform:translateX(-100px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideFromRight{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideFromTop{from{opacity:0;transform:translateY(-50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dumbbell{0%,100%{transform:rotate(-15deg) translateY(0)}50%{transform:rotate(15deg) translateY(-10px)}}
+@keyframes checkBounce{0%{transform:scale(1)}50%{transform:scale(1.3) rotate(12deg)}100%{transform:scale(1)}}
+@keyframes todayPulse{0%,100%{box-shadow:0 0 10px rgba(245,158,11,.5)}50%{box-shadow:0 0 25px rgba(245,158,11,.9)}}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px}
+.logo{display:flex;align-items:center;gap:20px}
+.logo-icon{font-size:3.5rem;animation:dumbbell 2s infinite;filter:drop-shadow(0 0 15px rgba(59,130,246,.6))}
+.logo-text h1{font-family:'Poppins',sans-serif;font-size:3rem;font-weight:900;letter-spacing:3px;display:flex;gap:15px}
+.word-daily{background:linear-gradient(135deg,#06b6d4,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:slideFromLeft 1s}
+.word-forge{background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:slideFromRight 1s .3s both}
+.logo-text p{font-size:1.1rem;font-weight:600;letter-spacing:2px;display:flex;gap:8px}
+.tagline-word{animation-fill-mode:both}
+.tagline-word:nth-child(1){background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:slideFromLeft 1s .6s}
+.tagline-word:nth-child(2){background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:slideFromTop 1s .8s}
+.tagline-word:nth-child(3){background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:slideFromRight 1s 1s}
+.header-actions{display:flex;gap:12px;flex-wrap:wrap}
+.today-badge{background:linear-gradient(135deg,#10b981,#059669);padding:12px 24px;border-radius:12px;font-weight:700;box-shadow:0 4px 15px rgba(16,185,129,.4);transition:all .3s;animation:fadeInUp .6s 1.2s both}
+.today-badge:hover{transform:translateY(-3px) scale(1.05)}
+.btn{padding:12px 24px;border:none;border-radius:12px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;gap:10px;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,.3);transform:translate(-50%,-50%);transition:width .6s,height .6s}
+.btn:active::before{width:300px;height:300px}
+.btn-primary{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 4px 15px rgba(59,130,246,.4)}
+.btn-primary:hover{transform:translateY(-3px) scale(1.05)}
+.btn-secondary{background:rgba(148,163,184,.2);color:#e2e8f0;border:2px solid rgba(148,163,184,.4)}
+.btn-secondary:hover{transform:translateY(-2px)}
+.week-selector{display:flex;align-items:center;justify-content:center;gap:25px;padding:15px;background:rgba(15,23,42,.6);border-radius:15px}
+.week-nav{background:rgba(59,130,246,.2);border:2px solid rgba(59,130,246,.4);color:#fff;width:45px;height:45px;border-radius:50%;cursor:pointer;transition:all .3s;font-size:1.5rem}
+.week-nav:hover{transform:scale(1.2) rotate(15deg);box-shadow:0 0 25px rgba(59,130,246,.8)}
+.week-display{font-size:1.3rem;font-weight:700;color:#60a5fa}
+.main-content{display:grid;grid-template-columns:1fr 400px;gap:30px}
+.habits-section{animation:fadeInUp .8s .3s both}
+.section-title{font-size:1.8rem;margin-bottom:25px;color:#60a5fa;display:flex;gap:12px;font-weight:700}
+.add-habit-form{background:rgba(30,41,59,.7);border:2px solid rgba(148,163,184,.3);border-radius:15px;padding:25px;margin-bottom:25px;transition:all .3s}
+.add-habit-form:hover{border-color:rgba(59,130,246,.6)}
+.form-row{display:flex;gap:12px}
+.form-input{flex:1;padding:14px 18px;background:rgba(15,23,42,.6);border:2px solid rgba(148,163,184,.3);border-radius:12px;color:#fff;font-size:1.1rem;font-weight:600;transition:all .3s}
+.form-input:focus{outline:0;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.2);transform:translateY(-2px)}
+.emoji-select{width:70px;padding:14px;background:rgba(15,23,42,.6);border:2px solid rgba(148,163,184,.3);border-radius:12px;color:#fff;font-size:1.5rem;cursor:pointer;transition:all .3s}
+.emoji-select:hover{transform:scale(1.1) rotate(10deg)}
+.table-container{background:rgba(30,41,59,.7);border:2px solid rgba(148,163,184,.3);border-radius:15px;padding:25px;overflow-x:auto}
+.habit-table{width:100%;border-collapse:collapse;min-width:750px}
+.habit-table thead th{background:rgba(59,130,246,.3);color:#60a5fa;padding:14px;text-align:center;font-weight:700;border:1px solid rgba(148,163,184,.3);transition:all .3s}
+.habit-table thead th:hover{background:rgba(59,130,246,.4);transform:scale(1.03)}
+.habit-table thead th:first-child{text-align:left;width:220px}
+.habit-table tbody td{padding:14px;text-align:center;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.5);transition:all .3s}
+.habit-table tbody tr:hover{transform:translateX(8px)}
+.habit-table tbody tr:hover td{background:rgba(59,130,246,.2)}
+.habit-table tbody td:first-child{text-align:left;font-weight:700}
+.habit-info-cell{display:flex;gap:15px;justify-content:space-between}
+.habit-name-display{display:flex;gap:12px;transition:all .3s}
+.habit-name-display:hover{transform:translateX(5px)}
+.habit-emoji{font-size:1.8rem;transition:all .3s}
+.habit-emoji:hover{transform:scale(1.4) rotate(15deg)}
+.habit-name{font-size:1.1rem}
+.habit-delete{background:rgba(239,68,68,.3);border:none;color:#ef4444;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;transition:all .3s}
+.habit-delete:hover{transform:scale(1.2) rotate(-8deg);box-shadow:0 0 20px rgba(239,68,68,.6)}
+.custom-checkbox{width:32px;height:32px;border:3px solid rgba(148,163,184,.5);background:rgba(15,23,42,.7);border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .3s;font-size:1.3rem;font-weight:700;position:relative}
+.custom-checkbox:hover{border-color:#3b82f6;transform:scale(1.2) rotate(8deg);box-shadow:0 0 20px rgba(59,130,246,.7)}
+.custom-checkbox:active{transform:scale(.9)}
+.custom-checkbox.checked{background:linear-gradient(135deg,#10b981,#059669);border-color:#10b981;color:#fff;box-shadow:0 0 25px rgba(16,185,129,.7);animation:checkBounce .5s}
+.custom-checkbox.crossed{background:linear-gradient(135deg,#ef4444,#dc2626);border-color:#ef4444;color:#fff;box-shadow:0 0 25px rgba(239,68,68,.7);animation:checkBounce .5s}
+.custom-checkbox.today{border-color:#f59e0b;animation:todayPulse 2s infinite}
+.empty-state{text-align:center;padding:50px;color:#64748b;font-size:1.2rem}
+.analytics-section{animation:fadeInUp .8s .5s both;display:flex;flex-direction:column;gap:25px}
+.analytics-card{background:rgba(30,41,59,.7);border:2px solid rgba(148,163,184,.3);border-radius:15px;padding:25px;transition:all .3s}
+.analytics-card:hover{border-color:rgba(59,130,246,.6);transform:translateY(-5px)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:25px}
+.stat-box{background:rgba(15,23,42,.6);padding:20px;border-radius:12px;text-align:center;transition:all .3s;border:2px solid rgba(148,163,184,.2)}
+.stat-box:hover{transform:translateY(-8px) scale(1.05);border-color:rgba(59,130,246,.5)}
+.stat-value{font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:.95rem;color:#94a3b8;margin-top:8px;font-weight:600}
+.chart-container{height:220px;margin-top:20px}
+.progress-list{display:flex;flex-direction:column;gap:15px}
+.progress-item{display:flex;gap:12px;transition:all .3s;padding:10px;border-radius:10px}
+.progress-item:hover{background:rgba(59,130,246,.15);transform:translateX(8px)}
+.progress-emoji{font-size:1.6rem;transition:all .3s}
+.progress-item:hover .progress-emoji{transform:scale(1.4) rotate(20deg)}
+.progress-bar-container{flex:1;background:rgba(15,23,42,.6);height:12px;border-radius:10px;overflow:hidden;border:1px solid rgba(148,163,184,.3)}
+.progress-bar{height:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:10px;transition:width .8s;box-shadow:0 0 15px rgba(59,130,246,.6)}
+.progress-percent{font-size:1rem;color:#94a3b8;min-width:50px;text-align:right;font-weight:700}
+.reports-section{animation:fadeInUp .8s both}
+.months-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:25px;margin-bottom:35px}
+.month-card{background:rgba(30,41,59,.7);border:3px solid rgba(148,163,184,.3);border-radius:15px;padding:30px;text-align:center;cursor:pointer;transition:all .4s;position:relative;overflow:hidden}
+.month-card:hover{border-color:#3b82f6;transform:translateY(-10px) scale(1.05);box-shadow:0 20px 50px rgba(59,130,246,.5)}
+.month-card.active{border-color:#10b981;background:rgba(16,185,129,.2)}
+.month-name{font-size:1.8rem;font-weight:900;color:#60a5fa;margin-bottom:12px}
+.month-stats{font-size:1.1rem;color:#94a3b8;font-weight:600}
+.monthly-report-container{background:rgba(30,41,59,.7);border:2px solid rgba(148,163,184,.3);border-radius:15px;padding:35px}
+.report-header{margin-bottom:30px;padding-bottom:25px;border-bottom:3px solid rgba(148,163,184,.3)}
+.report-title{font-size:2.5rem;color:#60a5fa;margin-bottom:15px;font-weight:900}
+.report-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:25px}
+.monthly-table-wrapper{overflow-x:auto}
+.monthly-table-wrapper .habit-table thead th,.monthly-table-wrapper .habit-table tbody td{padding:8px;font-size:.9rem}
+.monthly-table-wrapper .custom-checkbox{width:24px;height:24px;font-size:1rem}
+.monthly-chart-container{height:300px;margin-top:25px;padding:20px;background:rgba(15,23,42,.5);border-radius:12px}
+@media (max-width:1200px){.main-content{grid-template-columns:1fr}.logo-text h1{font-size:2.2rem}}
+</style>
+</head>
+<body>
+<div class="cursor-bubble"></div>
+<div class="container">
+<div class="page active" id="mainPage">
+<div class="header">
+<div class="header-top">
+<div class="logo">
+<div class="logo-icon">💪</div>
+<div class="logo-text">
+<h1><span class="word-daily">DAILY</span><span class="word-forge">FORGE</span></h1>
+<p><span class="tagline-word">Forge</span> <span class="tagline-word">Your</span> <span class="tagline-word">Habits</span></p>
+</div>
+</div>
+<div class="header-actions">
+<div class="today-badge" id="todayBadge"></div>
+<button class="btn btn-secondary" onclick="showReports()">📊 Monthly Reports</button>
+<button class="btn btn-primary" onclick="exportToExcel()">💾 Export Excel</button>
+</div>
+</div>
+<div class="week-selector">
+<button class="week-nav" onclick="changeWeek(-1)">‹</button>
+<div class="week-display" id="weekDisplay"></div>
+<button class="week-nav" onclick="changeWeek(1)">›</button>
+</div>
+</div>
+<div class="main-content">
+<div class="habits-section">
+<h2 class="section-title"><span>🎯</span>Your Habits</h2>
+<div class="add-habit-form">
+<div class="form-row">
+<select class="emoji-select" id="emojiInput">
+<option value="💪">💪</option><option value="📚">📚</option><option value="🏃">🏃</option>
+<option value="🧘">🧘</option><option value="💧">💧</option><option value="🥗">🥗</option>
+<option value="😴">😴</option><option value="💰">💰</option><option value="🎯">🎯</option><option value="✨">✨</option>
+</select>
+<input type="text" class="form-input" id="habitInput" placeholder="Enter habit name...">
+<button class="btn btn-primary" onclick="addHabit()">+ Add</button>
+</div>
+</div>
+<div class="table-container">
+<table class="habit-table">
+<thead><tr><th>Habit</th><th id="d0"></th><th id="d1"></th><th id="d2"></th><th id="d3"></th><th id="d4"></th><th id="d5"></th><th id="d6"></th></tr></thead>
+<tbody id="habitTableBody"></tbody>
+</table>
+</div>
+</div>
+<div class="analytics-section">
+<h2 class="section-title"><span>📊</span>Analytics</h2>
+<div class="analytics-card">
+<div class="stat-grid">
+<div class="stat-box"><div class="stat-value" id="totalHabits">0</div><div class="stat-label">Total Habits</div></div>
+<div class="stat-box"><div class="stat-value" id="weekCompletion">0%</div><div class="stat-label">Week Completion</div></div>
+</div>
+<h3 style="color:#60a5fa;font-size:1rem;margin-bottom:15px">Week Progress</h3>
+<div class="progress-list" id="progressList"></div>
+</div>
+<div class="analytics-card">
+<h3 style="color:#60a5fa;font-size:1rem;margin-bottom:15px">Completion Trend</h3>
+<div class="chart-container"><canvas id="trendChart"></canvas></div>
+</div>
+</div>
+</div>
+</div>
+<div class="page" id="reportsPage">
+<div class="header">
+<div class="header-top">
+<div class="logo">
+<div class="logo-icon">💪</div>
+<div class="logo-text">
+<h1><span class="word-daily">DAILY</span><span class="word-forge">FORGE</span></h1>
+<p>Monthly Reports & Analytics</p>
+</div>
+</div>
+<button class="btn btn-secondary" onclick="showMain()">← Back</button>
+</div>
+</div>
+<div class="reports-section">
+<h2 class="section-title"><span>📅</span>Select Month</h2>
+<div class="months-grid" id="monthsGrid"></div>
+<div id="monthlyReportContainer" style="display:none">
+<div class="monthly-report-container">
+<div class="report-header">
+<h3 class="report-title" id="reportTitle"></h3>
+<div class="report-summary" id="reportSummary"></div>
+</div>
+<h3 style="color:#60a5fa;font-size:1.3rem;margin-bottom:20px">Daily Breakdown</h3>
+<div class="monthly-table-wrapper">
+<table class="habit-table">
+<thead id="monthlyTableHead"></thead>
+<tbody id="monthlyTableBody"></tbody>
+</table>
+</div>
+<div class="analytics-card" style="margin-top:30px">
+<h3 style="color:#60a5fa;font-size:1.2rem;margin-bottom:20px">Monthly Analytics</h3>
+<div class="progress-list" id="monthlyProgress"></div>
+</div>
+<div class="monthly-chart-container">
+<canvas id="monthlyChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+let habits=[],currentWeekStart,today=new Date(),chart=null,monthlyChart=null;
+const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Normal Cursor - No custom cursor code needed
+function initDates(){today=new Date();currentWeekStart=new Date(today);currentWeekStart.setDate(today.getDate()-today.getDay());updateTodayBadge()}
+function updateTodayBadge(){document.getElementById('todayBadge').textContent=`📅 Today: ${getOrdinal(today.getDate())} ${monthNames[today.getMonth()].substring(0,3)} ${today.getFullYear()}`}
+function getOrdinal(n){const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+function loadData(){const stored=localStorage.getItem('dailyforge_data');habits=stored?JSON.parse(stored):[]}
+function saveData(){localStorage.setItem('dailyforge_data',JSON.stringify(habits))}
+function getWeekDates(){const dates=[];for(let i=0;i<7;i++){const date=new Date(currentWeekStart);date.setDate(currentWeekStart.getDate()+i);dates.push(date)}return dates}
+function isToday(date){return date.getDate()===today.getDate()&&date.getMonth()===today.getMonth()&&date.getFullYear()===today.getFullYear()}
+function updateWeekDisplay(){const dates=getWeekDates();document.getElementById('weekDisplay').textContent=`${getOrdinal(dates[0].getDate())} ${monthNames[dates[0].getMonth()].substring(0,3)} - ${getOrdinal(dates[6].getDate())} ${monthNames[dates[6].getMonth()].substring(0,3)}, ${dates[6].getFullYear()}`;dates.forEach((date,i)=>{document.getElementById(`d${i}`).textContent=`${getOrdinal(date.getDate())} ${monthNames[date.getMonth()].substring(0,3)}`})}
+function changeWeek(direction){currentWeekStart.setDate(currentWeekStart.getDate()+(direction*7));updateWeekDisplay();renderTable()}
+function addHabit(){const name=document.getElementById('habitInput').value.trim(),emoji=document.getElementById('emojiInput').value;if(!name)return;habits.push({id:Date.now().toString(),name,emoji,completions:{}});saveData();document.getElementById('habitInput').value='';renderTable();updateAnalytics()}
+function deleteHabit(id){if(confirm('Delete?')){habits=habits.filter(h=>h.id!==id);saveData();renderTable();updateAnalytics()}}
+function toggleDay(habitId,dateStr){const habit=habits.find(h=>h.id===habitId);if(habit){const current=habit.completions[dateStr]||'';habit.completions[dateStr]=current===''?'checked':current==='checked'?'crossed':'';saveData();renderTable();updateAnalytics()}}
+function renderTable(){const tbody=document.getElementById('habitTableBody'),dates=getWeekDates();if(!habits.length){tbody.innerHTML='<tr><td colspan="8" class="empty-state">No habits yet!</td></tr>';return}tbody.innerHTML=habits.map(habit=>{const cells=dates.map(date=>{const dateStr=date.toISOString().split('T')[0],status=habit.completions[dateStr]||'';return`<td><div class="custom-checkbox ${status} ${isToday(date)?'today':''}" onclick="toggleDay('${habit.id}','${dateStr}')">${status==='checked'?'✓':status==='crossed'?'✗':''}</div></td>`}).join('');return`<tr><td><div class="habit-info-cell"><div class="habit-name-display"><span class="habit-emoji">${habit.emoji}</span><span class="habit-name">${habit.name}</span></div><button class="habit-delete" onclick="deleteHabit('${habit.id}')">🗑</button></div></td>${cells}</tr>`}).join('')}
+function updateAnalytics(){const dates=getWeekDates();document.getElementById('totalHabits').textContent=habits.length;let totalPossible=habits.length*7,totalCompleted=0;habits.forEach(habit=>{dates.forEach(date=>{if(habit.completions[date.toISOString().split('T')[0]]==='checked')totalCompleted++})});document.getElementById('weekCompletion').textContent=(totalPossible>0?Math.round((totalCompleted/totalPossible)*100):0)+'%';document.getElementById('progressList').innerHTML=habits.map(habit=>{let completed=0;dates.forEach(date=>{if(habit.completions[date.toISOString().split('T')[0]]==='checked')completed++});const percent=Math.round((completed/7)*100);return`<div class="progress-item"><div class="progress-emoji">${habit.emoji}</div><div class="progress-bar-container"><div class="progress-bar" style="width:${percent}%"></div></div><div class="progress-percent">${percent}%</div></div>`}).join('');updateChart()}
+function updateChart(){const ctx=document.getElementById('trendChart'),dates=getWeekDates(),data=dates.map(date=>{const dateStr=date.toISOString().split('T')[0];let completed=0;habits.forEach(habit=>{if(habit.completions[dateStr]==='checked')completed++});return habits.length>0?(completed/habits.length)*100:0});if(chart)chart.destroy();chart=new Chart(ctx,{type:'line',data:{labels:dates.map(d=>dayNames[d.getDay()].substring(0,3)),datasets:[{label:'Completion %',data:data,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.1)',tension:0.4,fill:true,pointRadius:6,pointHoverRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#94a3b8'},grid:{color:'rgba(148,163,184,0.1)'}},x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(148,163,184,0.1)'}}}}})}
+function exportToExcel(){const dates=getWeekDates(),data=[['Habit',...dates.map(d=>`${dayNames[d.getDay()].substring(0,3)} ${d.getDate()}`)],...habits.map(habit=>[`${habit.emoji} ${habit.name}`,...dates.map(date=>{const status=habit.completions[date.toISOString().split('T')[0]];return status==='checked'?'✓':status==='crossed'?'✗':''})])],ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Habits');XLSX.writeFile(wb,`DailyForge_${monthNames[dates[0].getMonth()].substring(0,3)}${dates[0].getDate()}_${dates[0].getFullYear()}.xlsx`)}
+function showReports(){renderMonthsList();document.getElementById('mainPage').classList.remove('active');document.getElementById('reportsPage').classList.add('active')}
+function showMain(){document.getElementById('reportsPage').classList.remove('active');document.getElementById('mainPage').classList.add('active')}
+function renderMonthsList(){const grid=document.getElementById('monthsGrid');grid.innerHTML=monthNames.map((month,i)=>{const totalDays=new Date(today.getFullYear(),i+1,0).getDate();let completed=0,total=0;habits.forEach(habit=>{for(let day=1;day<=totalDays;day++){const dateStr=new Date(today.getFullYear(),i,day).toISOString().split('T')[0];total++;if(habit.completions[dateStr]==='checked')completed++}});const percent=total>0?Math.round((completed/total)*100):0;return`<div class="month-card" onclick="showMonthReport(${i})"><div class="month-name">${month} ${today.getFullYear()}</div><div class="month-stats">${percent}% Complete</div></div>`}).join('')}
+function showMonthReport(monthIndex){const monthName=monthNames[monthIndex],year=today.getFullYear(),daysInMonth=new Date(year,monthIndex+1,0).getDate();document.getElementById('reportTitle').textContent=`${monthName} ${year} Report`;let completed=0,total=habits.length*daysInMonth;habits.forEach(habit=>{for(let day=1;day<=daysInMonth;day++){if(habit.completions[new Date(year,monthIndex,day).toISOString().split('T')[0]]==='checked')completed++}});document.getElementById('reportSummary').innerHTML=`<div class="stat-box"><div class="stat-value">${habits.length}</div><div class="stat-label">Total Habits</div></div><div class="stat-box"><div class="stat-value">${total>0?Math.round((completed/total)*100):0}%</div><div class="stat-label">Month Completion</div></div><div class="stat-box"><div class="stat-value">${completed}</div><div class="stat-label">Days Completed</div></div>`;const dates=[];for(let d=1;d<=daysInMonth;d++)dates.push(d);document.getElementById('monthlyTableHead').innerHTML=`<tr><th>Habit</th>${dates.map(d=>`<th>${d}</th>`).join('')}</tr>`;document.getElementById('monthlyTableBody').innerHTML=habits.map(habit=>{const cells=dates.map(day=>{const dateStr=new Date(year,monthIndex,day).toISOString().split('T')[0],status=habit.completions[dateStr]||'';return`<td><div class="custom-checkbox ${status}">${status==='checked'?'✓':status==='crossed'?'✗':''}</div></td>`}).join('');return`<tr><td><div class="habit-name-display"><span class="habit-emoji">${habit.emoji}</span><span class="habit-name">${habit.name}</span></div></td>${cells}</tr>`}).join('');document.getElementById('monthlyProgress').innerHTML=habits.map(habit=>{let habitCompleted=0;for(let day=1;day<=daysInMonth;day++){if(habit.completions[new Date(year,monthIndex,day).toISOString().split('T')[0]]==='checked')habitCompleted++}const habitPercent=Math.round((habitCompleted/daysInMonth)*100);return`<div class="progress-item"><div class="progress-emoji">${habit.emoji}</div><div class="progress-bar-container"><div class="progress-bar" style="width:${habitPercent}%"></div></div><div class="progress-percent">${habitPercent}%</div></div>`}).join('');updateMonthlyChart(monthIndex);document.getElementById('monthlyReportContainer').style.display='block'}
+function updateMonthlyChart(monthIndex){const ctx=document.getElementById('monthlyChart'),year=today.getFullYear(),daysInMonth=new Date(year,monthIndex+1,0).getDate(),dates=[],data=[];for(let day=1;day<=daysInMonth;day++){dates.push(day);const dateStr=new Date(year,monthIndex,day).toISOString().split('T')[0];let completed=0;habits.forEach(habit=>{if(habit.completions[dateStr]==='checked')completed++});data.push(habits.length>0?(completed/habits.length)*100:0)}if(monthlyChart)monthlyChart.destroy();monthlyChart=new Chart(ctx,{type:'line',data:{labels:dates,datasets:[{label:'Daily Completion %',data:data,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.1)',tension:0.3,fill:true,pointRadius:3,pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#94a3b8'},grid:{color:'rgba(148,163,184,0.1)'}},x:{ticks:{color:'#94a3b8',maxTicksLimit:15},grid:{color:'rgba(148,163,184,0.1)'}}}}})}
+initDates();loadData();updateWeekDisplay();renderTable();updateAnalytics();
+</script>
+</body>
+</html>
