@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Forge</title>
+<title>Daily Forge - Enhanced</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -24,6 +24,7 @@ body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 @keyframes dumbbell{0%,100%{transform:rotate(-15deg) translateY(0)}50%{transform:rotate(15deg) translateY(-10px)}}
 @keyframes checkBounce{0%{transform:scale(1)}50%{transform:scale(1.3) rotate(12deg)}100%{transform:scale(1)}}
 @keyframes todayPulse{0%,100%{box-shadow:0 0 10px rgba(245,158,11,.5)}50%{box-shadow:0 0 25px rgba(245,158,11,.9)}}
+@keyframes modalSlideIn{from{opacity:0;transform:translate(-50%,-45%) scale(0.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px}
 .logo{display:flex;align-items:center;gap:20px}
 .logo-icon{font-size:3.5rem;animation:dumbbell 2s infinite;filter:drop-shadow(0 0 15px rgba(59,130,246,.6))}
@@ -68,14 +69,22 @@ body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 .habit-table tbody tr:hover{transform:translateX(8px)}
 .habit-table tbody tr:hover td{background:rgba(59,130,246,.2)}
 .habit-table tbody td:first-child{text-align:left;font-weight:700}
-.habit-info-cell{display:flex;gap:15px;justify-content:space-between}
-.habit-name-display{display:flex;gap:12px;transition:all .3s}
+.habit-info-cell{display:flex;gap:15px;justify-content:space-between;align-items:center}
+.habit-name-display{display:flex;gap:12px;transition:all .3s;align-items:center}
 .habit-name-display:hover{transform:translateX(5px)}
 .habit-emoji{font-size:1.8rem;transition:all .3s}
 .habit-emoji:hover{transform:scale(1.4) rotate(15deg)}
 .habit-name{font-size:1.1rem}
-.habit-delete{background:rgba(239,68,68,.3);border:none;color:#ef4444;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;transition:all .3s}
-.habit-delete:hover{transform:scale(1.2) rotate(-8deg);box-shadow:0 0 20px rgba(239,68,68,.6)}
+.habit-actions{display:flex;gap:8px}
+.habit-btn{background:rgba(59,130,246,.3);border:none;color:#60a5fa;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;transition:all .3s;font-size:0.9rem}
+.habit-btn:hover{transform:scale(1.1);box-shadow:0 0 15px rgba(59,130,246,.6)}
+.habit-rename{background:rgba(168,85,247,.3);color:#a78bfa}
+.habit-rename:hover{box-shadow:0 0 15px rgba(168,85,247,.6)}
+.habit-notes{background:rgba(34,197,94,.3);color:#4ade80}
+.habit-notes:hover{box-shadow:0 0 15px rgba(34,197,94,.6)}
+.habit-delete{background:rgba(239,68,68,.3);color:#ef4444}
+.habit-delete:hover{box-shadow:0 0 20px rgba(239,68,68,.6)}
+.notes-indicator{font-size:0.85rem;color:#4ade80;margin-left:5px}
 .custom-checkbox{width:32px;height:32px;border:3px solid rgba(148,163,184,.5);background:rgba(15,23,42,.7);border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .3s;font-size:1.3rem;font-weight:700;position:relative}
 .custom-checkbox:hover{border-color:#3b82f6;transform:scale(1.2) rotate(8deg);box-shadow:0 0 20px rgba(59,130,246,.7)}
 .custom-checkbox:active{transform:scale(.9)}
@@ -115,6 +124,20 @@ body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 .monthly-table-wrapper .habit-table thead th,.monthly-table-wrapper .habit-table tbody td{padding:8px;font-size:.9rem}
 .monthly-table-wrapper .custom-checkbox{width:24px;height:24px;font-size:1rem}
 .monthly-chart-container{height:300px;margin-top:25px;padding:20px;background:rgba(15,23,42,.5);border-radius:12px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(5px);display:none;z-index:1000;animation:fadeIn .3s}
+.modal-overlay.active{display:flex;align-items:center;justify-content:center}
+.modal{background:rgba(30,41,59,.95);border:2px solid rgba(148,163,184,.3);border-radius:20px;padding:35px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;position:relative;animation:modalSlideIn .4s;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;padding-bottom:20px;border-bottom:2px solid rgba(148,163,184,.3)}
+.modal-title{font-size:1.8rem;font-weight:900;color:#60a5fa}
+.modal-close{background:rgba(239,68,68,.3);border:none;color:#ef4444;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;transition:all .3s}
+.modal-close:hover{transform:rotate(90deg) scale(1.2);box-shadow:0 0 20px rgba(239,68,68,.6)}
+.modal-body{margin-bottom:25px}
+.modal-input{width:100%;padding:14px 18px;background:rgba(15,23,42,.6);border:2px solid rgba(148,163,184,.3);border-radius:12px;color:#fff;font-size:1.1rem;font-weight:600;margin-bottom:15px;transition:all .3s}
+.modal-input:focus{outline:0;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.2)}
+.modal-textarea{width:100%;min-height:150px;padding:14px 18px;background:rgba(15,23,42,.6);border:2px solid rgba(148,163,184,.3);border-radius:12px;color:#fff;font-size:1rem;font-family:'Inter',sans-serif;resize:vertical;transition:all .3s}
+.modal-textarea:focus{outline:0;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.2)}
+.modal-footer{display:flex;gap:12px;justify-content:flex-end}
 @media (max-width:1200px){.main-content{grid-template-columns:1fr}.logo-text h1{font-size:2.2rem}}
 </style>
 </head>
@@ -222,11 +245,46 @@ body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1
 </div>
 </div>
 </div>
+
+<!-- Rename Modal -->
+<div class="modal-overlay" id="renameModal">
+<div class="modal">
+<div class="modal-header">
+<h3 class="modal-title">✏️ Rename Habit</h3>
+<button class="modal-close" onclick="closeRenameModal()">×</button>
+</div>
+<div class="modal-body">
+<input type="text" class="modal-input" id="renameInput" placeholder="Enter new habit name...">
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeRenameModal()">Cancel</button>
+<button class="btn btn-primary" onclick="saveRename()">Save</button>
+</div>
+</div>
+</div>
+
+<!-- Notes Modal -->
+<div class="modal-overlay" id="notesModal">
+<div class="modal">
+<div class="modal-header">
+<h3 class="modal-title">📝 Habit Notes</h3>
+<button class="modal-close" onclick="closeNotesModal()">×</button>
+</div>
+<div class="modal-body">
+<h4 style="color:#94a3b8;margin-bottom:10px;font-size:1rem" id="notesHabitName"></h4>
+<textarea class="modal-textarea" id="notesInput" placeholder="Write your notes here...&#10;&#10;Track your progress, thoughts, challenges, or achievements related to this habit."></textarea>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeNotesModal()">Cancel</button>
+<button class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
+</div>
+</div>
+</div>
+
 <script>
-let habits=[],currentWeekStart,today=new Date(),chart=null,monthlyChart=null;
+let habits=[],currentWeekStart,today=new Date(),chart=null,monthlyChart=null,currentRenameId=null,currentNotesId=null;
 const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-// Normal Cursor - No custom cursor code needed
 function initDates(){today=new Date();currentWeekStart=new Date(today);currentWeekStart.setDate(today.getDate()-today.getDay());updateTodayBadge()}
 function updateTodayBadge(){document.getElementById('todayBadge').textContent=`📅 Today: ${getOrdinal(today.getDate())} ${monthNames[today.getMonth()].substring(0,3)} ${today.getFullYear()}`}
 function getOrdinal(n){const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
@@ -236,10 +294,111 @@ function getWeekDates(){const dates=[];for(let i=0;i<7;i++){const date=new Date(
 function isToday(date){return date.getDate()===today.getDate()&&date.getMonth()===today.getMonth()&&date.getFullYear()===today.getFullYear()}
 function updateWeekDisplay(){const dates=getWeekDates();document.getElementById('weekDisplay').textContent=`${getOrdinal(dates[0].getDate())} ${monthNames[dates[0].getMonth()].substring(0,3)} - ${getOrdinal(dates[6].getDate())} ${monthNames[dates[6].getMonth()].substring(0,3)}, ${dates[6].getFullYear()}`;dates.forEach((date,i)=>{document.getElementById(`d${i}`).textContent=`${getOrdinal(date.getDate())} ${monthNames[date.getMonth()].substring(0,3)}`})}
 function changeWeek(direction){currentWeekStart.setDate(currentWeekStart.getDate()+(direction*7));updateWeekDisplay();renderTable()}
-function addHabit(){const name=document.getElementById('habitInput').value.trim(),emoji=document.getElementById('emojiInput').value;if(!name)return;habits.push({id:Date.now().toString(),name,emoji,completions:{}});saveData();document.getElementById('habitInput').value='';renderTable();updateAnalytics()}
-function deleteHabit(id){if(confirm('Delete?')){habits=habits.filter(h=>h.id!==id);saveData();renderTable();updateAnalytics()}}
+function addHabit(){const name=document.getElementById('habitInput').value.trim(),emoji=document.getElementById('emojiInput').value;if(!name)return;habits.push({id:Date.now().toString(),name,emoji,completions:{},notes:''});saveData();document.getElementById('habitInput').value='';renderTable();updateAnalytics()}
+function deleteHabit(id){if(confirm('Delete this habit?')){habits=habits.filter(h=>h.id!==id);saveData();renderTable();updateAnalytics()}}
+
+function openRenameModal(id){
+  const habit=habits.find(h=>h.id===id);
+  if(!habit)return;
+  currentRenameId=id;
+  document.getElementById('renameInput').value=habit.name;
+  document.getElementById('renameModal').classList.add('active');
+  setTimeout(()=>document.getElementById('renameInput').focus(),100);
+}
+
+function closeRenameModal(){
+  document.getElementById('renameModal').classList.remove('active');
+  currentRenameId=null;
+}
+
+function saveRename(){
+  const newName=document.getElementById('renameInput').value.trim();
+  if(!newName||!currentRenameId)return;
+  const habit=habits.find(h=>h.id===currentRenameId);
+  if(habit){
+    habit.name=newName;
+    saveData();
+    renderTable();
+    updateAnalytics();
+  }
+  closeRenameModal();
+}
+
+function openNotesModal(id){
+  const habit=habits.find(h=>h.id===id);
+  if(!habit)return;
+  currentNotesId=id;
+  document.getElementById('notesHabitName').textContent=`${habit.emoji} ${habit.name}`;
+  document.getElementById('notesInput').value=habit.notes||'';
+  document.getElementById('notesModal').classList.add('active');
+  setTimeout(()=>document.getElementById('notesInput').focus(),100);
+}
+
+function closeNotesModal(){
+  document.getElementById('notesModal').classList.remove('active');
+  currentNotesId=null;
+}
+
+function saveNotes(){
+  if(!currentNotesId)return;
+  const habit=habits.find(h=>h.id===currentNotesId);
+  if(habit){
+    habit.notes=document.getElementById('notesInput').value;
+    saveData();
+    renderTable();
+  }
+  closeNotesModal();
+}
+
+// Close modals on overlay click
+document.getElementById('renameModal').addEventListener('click',function(e){
+  if(e.target===this)closeRenameModal();
+});
+document.getElementById('notesModal').addEventListener('click',function(e){
+  if(e.target===this)closeNotesModal();
+});
+
+// Close modals on Escape key
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    closeRenameModal();
+    closeNotesModal();
+  }
+});
+
 function toggleDay(habitId,dateStr){const habit=habits.find(h=>h.id===habitId);if(habit){const current=habit.completions[dateStr]||'';habit.completions[dateStr]=current===''?'checked':current==='checked'?'crossed':'';saveData();renderTable();updateAnalytics()}}
-function renderTable(){const tbody=document.getElementById('habitTableBody'),dates=getWeekDates();if(!habits.length){tbody.innerHTML='<tr><td colspan="8" class="empty-state">No habits yet!</td></tr>';return}tbody.innerHTML=habits.map(habit=>{const cells=dates.map(date=>{const dateStr=date.toISOString().split('T')[0],status=habit.completions[dateStr]||'';return`<td><div class="custom-checkbox ${status} ${isToday(date)?'today':''}" onclick="toggleDay('${habit.id}','${dateStr}')">${status==='checked'?'✓':status==='crossed'?'✗':''}</div></td>`}).join('');return`<tr><td><div class="habit-info-cell"><div class="habit-name-display"><span class="habit-emoji">${habit.emoji}</span><span class="habit-name">${habit.name}</span></div><button class="habit-delete" onclick="deleteHabit('${habit.id}')">🗑</button></div></td>${cells}</tr>`}).join('')}
+
+function renderTable(){
+  const tbody=document.getElementById('habitTableBody'),dates=getWeekDates();
+  if(!habits.length){
+    tbody.innerHTML='<tr><td colspan="8" class="empty-state">No habits yet! Add one to get started.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=habits.map(habit=>{
+    const cells=dates.map(date=>{
+      const dateStr=date.toISOString().split('T')[0],status=habit.completions[dateStr]||'';
+      return`<td><div class="custom-checkbox ${status} ${isToday(date)?'today':''}" onclick="toggleDay('${habit.id}','${dateStr}')">${status==='checked'?'✓':status==='crossed'?'✗':''}</div></td>`;
+    }).join('');
+    const hasNotes=habit.notes&&habit.notes.trim()!=='';
+    return`<tr>
+      <td>
+        <div class="habit-info-cell">
+          <div class="habit-name-display">
+            <span class="habit-emoji">${habit.emoji}</span>
+            <span class="habit-name">${habit.name}</span>
+            ${hasNotes?'<span class="notes-indicator" title="Has notes">📝</span>':''}
+          </div>
+          <div class="habit-actions">
+            <button class="habit-btn habit-rename" onclick="openRenameModal('${habit.id}')" title="Rename">✏️</button>
+            <button class="habit-btn habit-notes" onclick="openNotesModal('${habit.id}')" title="Notes">📝</button>
+            <button class="habit-btn habit-delete" onclick="deleteHabit('${habit.id}')" title="Delete">🗑</button>
+          </div>
+        </div>
+      </td>${cells}
+    </tr>`;
+  }).join('');
+}
+
 function updateAnalytics(){const dates=getWeekDates();document.getElementById('totalHabits').textContent=habits.length;let totalPossible=habits.length*7,totalCompleted=0;habits.forEach(habit=>{dates.forEach(date=>{if(habit.completions[date.toISOString().split('T')[0]]==='checked')totalCompleted++})});document.getElementById('weekCompletion').textContent=(totalPossible>0?Math.round((totalCompleted/totalPossible)*100):0)+'%';document.getElementById('progressList').innerHTML=habits.map(habit=>{let completed=0;dates.forEach(date=>{if(habit.completions[date.toISOString().split('T')[0]]==='checked')completed++});const percent=Math.round((completed/7)*100);return`<div class="progress-item"><div class="progress-emoji">${habit.emoji}</div><div class="progress-bar-container"><div class="progress-bar" style="width:${percent}%"></div></div><div class="progress-percent">${percent}%</div></div>`}).join('');updateChart()}
 function updateChart(){const ctx=document.getElementById('trendChart'),dates=getWeekDates(),data=dates.map(date=>{const dateStr=date.toISOString().split('T')[0];let completed=0;habits.forEach(habit=>{if(habit.completions[dateStr]==='checked')completed++});return habits.length>0?(completed/habits.length)*100:0});if(chart)chart.destroy();chart=new Chart(ctx,{type:'line',data:{labels:dates.map(d=>dayNames[d.getDay()].substring(0,3)),datasets:[{label:'Completion %',data:data,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.1)',tension:0.4,fill:true,pointRadius:6,pointHoverRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#94a3b8'},grid:{color:'rgba(148,163,184,0.1)'}},x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(148,163,184,0.1)'}}}}})}
 function exportToExcel(){const dates=getWeekDates(),data=[['Habit',...dates.map(d=>`${dayNames[d.getDay()].substring(0,3)} ${d.getDate()}`)],...habits.map(habit=>[`${habit.emoji} ${habit.name}`,...dates.map(date=>{const status=habit.completions[date.toISOString().split('T')[0]];return status==='checked'?'✓':status==='crossed'?'✗':''})])],ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Habits');XLSX.writeFile(wb,`DailyForge_${monthNames[dates[0].getMonth()].substring(0,3)}${dates[0].getDate()}_${dates[0].getFullYear()}.xlsx`)}
