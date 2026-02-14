@@ -624,17 +624,63 @@ body::after{
 @media (max-width:1400px){
 .top-section{grid-template-columns:1fr 300px}
 .cards-row{grid-template-columns:repeat(4,1fr)}
+.month-calendar{grid-template-columns:repeat(7,1fr)}
+.month-tasks-summary{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:1200px){
+.top-section{grid-template-columns:1fr}
+.cards-row{grid-template-columns:repeat(3,1fr)}
+.month-detail-content{padding:20px}
+.month-calendar{grid-template-columns:repeat(5,1fr)}
+.month-stats{grid-template-columns:repeat(2,1fr)}
 }
 
 @media (max-width:1000px){
-.top-section{grid-template-columns:1fr}
-.cards-row{grid-template-columns:repeat(3,1fr)}
+.cards-row{grid-template-columns:repeat(2,1fr)}
+.month-calendar{grid-template-columns:repeat(4,1fr)}
+.habit-table{font-size:0.85rem}
+.month-day-card{min-height:160px;padding:10px}
+.intro-container{width:400px;height:400px}
+.intro-energy{width:180px;height:180px}
+.intro-brand .intro-title{font-size:40px}
 }
 
 @media (max-width:768px){
-.top-header{flex-direction:column;gap:10px}
-.top-actions{width:100%;justify-content:center}
-.cards-row{grid-template-columns:repeat(2,1fr)}
+.top-header{flex-direction:column;gap:10px;padding:12px}
+.top-actions{width:100%;justify-content:center;flex-wrap:wrap}
+.btn{flex:1;min-width:120px;font-size:0.85rem;padding:8px 12px}
+.week-bar{flex-direction:column;gap:8px}
+.cards-row{grid-template-columns:1fr}
+.top-section{gap:12px}
+.graph-container{height:200px}
+.habit-table{overflow-x:auto}
+.month-calendar{grid-template-columns:repeat(2,1fr);gap:8px}
+.month-day-card{min-height:140px;padding:8px}
+.month-stats{grid-template-columns:1fr;gap:10px}
+.month-tasks-summary{grid-template-columns:1fr}
+.month-detail-content{padding:15px;max-width:100%}
+.month-detail-title{font-size:1.4rem}
+.intro-container{width:320px;height:320px}
+.intro-energy{width:140px;height:140px}
+.intro-icon{width:50px;height:50px;font-size:10px}
+.intro-brand .intro-title{font-size:32px;letter-spacing:4px}
+.intro-quote{font-size:12px;letter-spacing:2px}
+}
+
+@media (max-width:480px){
+body{padding:10px}
+.top-header{padding:10px}
+.logo-text h1{font-size:1.2rem}
+.btn{font-size:0.8rem;padding:6px 10px;min-width:100px}
+.cards-row{gap:8px}
+.month-calendar{grid-template-columns:1fr;gap:6px}
+.month-day-card{min-height:auto}
+.month-detail-header{flex-direction:column;align-items:flex-start;gap:10px}
+.month-detail-close{position:absolute;top:15px;right:15px}
+.intro-container{width:280px;height:280px}
+.intro-brand .intro-title{font-size:28px}
+.habit-table td,.habit-table th{padding:4px;font-size:0.75rem}
 }
 </style>
 </head>
@@ -643,8 +689,8 @@ body::after{
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Poppins:wght@600&display=swap" rel="stylesheet">
 <style>
-.elite-intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999999;background:radial-gradient(circle at center,#1e1b4b,#0f172a,#000)}
-.intro-container{position:relative;width:520px;height:520px}
+.elite-intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999999;background:radial-gradient(circle at center,#1e1b4b,#0f172a,#000);padding:20px}
+.intro-container{position:relative;width:min(520px,90vw);height:min(520px,90vw);max-width:520px;max-height:520px}
 .intro-energy{position:absolute;top:50%;left:50%;width:220px;height:220px;border-radius:50%;transform:translate(-50%,-50%);background:conic-gradient(transparent,#8b5cf6,#c4b5fd,transparent);mask:radial-gradient(circle,transparent 60%,black 61%);-webkit-mask:radial-gradient(circle,transparent 60%,black 61%);animation:introSpin 6s linear infinite;opacity:.35}
 @keyframes introSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 .intro-icon{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(15,23,42,.9);border:2px solid #8b5cf6;display:flex;align-items:center;justify-content:center;color:#c4b5fd;font-size:12px;font-family:Poppins,sans-serif;text-align:center;opacity:0;box-shadow:0 0 20px rgba(139,92,246,.6);transition:all 1s cubic-bezier(.22,.61,.36,1)}
