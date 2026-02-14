@@ -621,66 +621,138 @@ body::after{
 .topic-name{color:#cbd5e1;font-size:0.85rem;font-weight:600;flex:1}
 .topic-time{color:#94a3b8;font-size:0.75rem;font-weight:600;white-space:nowrap}
 
-@media (max-width:1400px){
-.top-section{grid-template-columns:1fr 300px}
-.cards-row{grid-template-columns:repeat(4,1fr)}
-.month-calendar{grid-template-columns:repeat(7,1fr)}
-.month-tasks-summary{grid-template-columns:repeat(2,1fr)}
-}
+/* ONLY MOBILE/TABLET RESPONSIVE - LAPTOPS REMAIN SAME */
 
-@media (max-width:1200px){
-.top-section{grid-template-columns:1fr}
-.cards-row{grid-template-columns:repeat(3,1fr)}
-.month-detail-content{padding:20px}
-.month-calendar{grid-template-columns:repeat(5,1fr)}
-.month-stats{grid-template-columns:repeat(2,1fr)}
-}
-
-@media (max-width:1000px){
-.cards-row{grid-template-columns:repeat(2,1fr)}
-.month-calendar{grid-template-columns:repeat(4,1fr)}
-.habit-table{font-size:0.85rem}
-.month-day-card{min-height:160px;padding:10px}
-.intro-container{width:400px;height:400px}
-.intro-energy{width:180px;height:180px}
-.intro-brand .intro-title{font-size:40px}
+@media (max-width:1024px){
+.month-detail-content{padding:20px;max-width:95%}
+.month-calendar{gap:8px}
 }
 
 @media (max-width:768px){
-.top-header{flex-direction:column;gap:10px;padding:12px}
-.top-actions{width:100%;justify-content:center;flex-wrap:wrap}
-.btn{flex:1;min-width:120px;font-size:0.85rem;padding:8px 12px}
-.week-bar{flex-direction:column;gap:8px}
-.cards-row{grid-template-columns:1fr}
+/* TABLET */
+.top-header{flex-direction:column;gap:12px;padding:12px}
+.logo-text h1{font-size:1.4rem}
+.top-actions{width:100%;justify-content:center;flex-wrap:wrap;gap:8px}
+.btn{flex:1 1 auto;min-width:140px;font-size:0.85rem;padding:8px 14px}
+.week-bar{padding:10px;gap:15px}
+.week-text{font-size:0.95rem}
 .top-section{gap:12px}
-.graph-container{height:200px}
-.habit-table{overflow-x:auto}
-.month-calendar{grid-template-columns:repeat(2,1fr);gap:8px}
-.month-day-card{min-height:140px;padding:8px}
-.month-stats{grid-template-columns:1fr;gap:10px}
+.graph-container{height:220px}
+.cards-row{grid-template-columns:repeat(3,1fr);gap:10px}
+.habit-table{font-size:0.85rem;overflow-x:auto;display:block}
+.habit-table thead th{padding:6px 4px;font-size:0.7rem}
+.habit-table tbody td{padding:6px 4px}
+.month-stats{grid-template-columns:repeat(2,2fr);gap:12px}
+.month-calendar{grid-template-columns:repeat(4,1fr);gap:8px}
+.month-day-card{min-height:150px;padding:10px}
 .month-tasks-summary{grid-template-columns:1fr}
-.month-detail-content{padding:15px;max-width:100%}
-.month-detail-title{font-size:1.4rem}
-.intro-container{width:320px;height:320px}
-.intro-energy{width:140px;height:140px}
+.intro-container{width:min(420px,85vw);height:min(420px,85vw)}
+.intro-energy{width:180px;height:180px}
+.intro-brand .intro-title{font-size:42px;letter-spacing:6px}
+.intro-icon{width:55px;height:55px;font-size:11px}
+}
+
+@media (max-width:640px){
+/* MOBILE LANDSCAPE */
+body{padding:12px}
+.top-header{padding:10px}
+.logo-text h1{font-size:1.2rem}
+.date-info{font-size:0.75rem}
+.btn{min-width:120px;font-size:0.8rem;padding:7px 12px}
+.week-bar{flex-direction:column;gap:10px;padding:10px}
+.cards-row{grid-template-columns:repeat(2,1fr);gap:8px}
+.day-card{padding:12px}
+.card-chart{height:110px}
+.habit-table{font-size:0.75rem}
+.habit-table thead th{padding:5px 3px;font-size:0.65rem}
+.habit-table tbody td{padding:5px 3px}
+.month-stats{grid-template-columns:1fr;gap:10px}
+.month-stat-box{padding:12px}
+.month-calendar{grid-template-columns:repeat(3,1fr);gap:6px}
+.month-day-card{min-height:130px;padding:8px;font-size:0.85rem}
+.month-day-num{font-size:1rem}
+.month-day-name{font-size:0.65rem}
+.month-habit-text{font-size:0.7rem}
+.month-task-mini-text{font-size:0.65rem}
+.month-detail-title{font-size:1.3rem}
+.month-section-title{font-size:1rem}
+.intro-container{width:min(340px,80vw);height:min(340px,80vw)}
+.intro-energy{width:150px;height:150px}
+.intro-brand .intro-title{font-size:36px;letter-spacing:5px}
+.intro-quote{font-size:13px;letter-spacing:2px}
 .intro-icon{width:50px;height:50px;font-size:10px}
-.intro-brand .intro-title{font-size:32px;letter-spacing:4px}
-.intro-quote{font-size:12px;letter-spacing:2px}
 }
 
 @media (max-width:480px){
+/* MOBILE PORTRAIT */
 body{padding:10px}
-.top-header{padding:10px}
-.logo-text h1{font-size:1.2rem}
-.btn{font-size:0.8rem;padding:6px 10px;min-width:100px}
-.cards-row{gap:8px}
-.month-calendar{grid-template-columns:1fr;gap:6px}
+.top-header{padding:8px;gap:8px}
+.logo-section{gap:8px}
+.logo-icon{width:40px;height:40px}
+.logo-text h1{font-size:1.1rem;letter-spacing:1px}
+.date-info{font-size:0.7rem}
+.top-actions{gap:6px}
+.btn{min-width:100px;font-size:0.75rem;padding:6px 10px;gap:4px}
+.week-bar{padding:8px;gap:8px}
+.week-arrow{width:35px;height:35px;font-size:1.1rem}
+.week-text{font-size:0.85rem}
+.cards-row{grid-template-columns:1fr;gap:8px}
+.day-card{padding:10px}
+.day-name{font-size:0.8rem}
+.day-date{font-size:0.95rem}
+.card-chart{height:100px}
+.chart-percent{font-size:1.3rem}
+.stat-val{font-size:0.95rem}
+.stat-lbl{font-size:0.7rem}
+.task-mini{padding:5px;font-size:0.75rem}
+.task-mini-check{width:16px;height:16px}
+.habit-table{font-size:0.7rem}
+.habit-table thead th{padding:4px 2px;font-size:0.6rem}
+.habit-table tbody td{padding:4px 2px}
+.habit-emoji{font-size:1rem}
+.habit-name{font-size:0.75rem}
+.month-stats{gap:8px}
+.month-stat-box{padding:10px}
+.month-stat-value{font-size:1.4rem}
+.month-stat-label{font-size:0.75rem}
+.month-calendar{grid-template-columns:repeat(2,1fr);gap:6px}
+.month-day-card{min-height:120px;padding:6px}
+.month-day-num{font-size:0.9rem}
+.month-day-name{font-size:0.6rem}
+.month-habit-item{padding:3px 4px;gap:4px}
+.month-habit-icon{font-size:0.8rem}
+.month-habit-check{width:14px;height:14px;font-size:0.65rem}
+.month-habit-text{font-size:0.65rem}
+.month-task-mini{padding:3px 4px}
+.month-task-mini-check{width:10px;height:10px}
+.month-task-mini-text{font-size:0.6rem}
+.month-day-summary{font-size:0.7rem;padding:4px}
+.month-tasks-summary{gap:6px}
+.month-summary-task{padding:8px 10px}
+.month-summary-check{width:18px;height:18px}
+.month-summary-text{font-size:0.8rem}
+.month-detail-content{padding:12px}
+.month-detail-header{flex-direction:column;align-items:flex-start;gap:8px;padding-bottom:10px}
+.month-detail-title{font-size:1.2rem}
+.month-detail-close{position:absolute;top:12px;right:12px;width:35px;height:35px;font-size:1.3rem}
+.month-section{margin-bottom:15px}
+.month-section-title{font-size:0.9rem;margin-bottom:10px}
+.intro-container{width:min(280px,75vw);height:min(280px,75vw)}
+.intro-energy{width:120px;height:120px}
+.intro-brand .intro-title{font-size:28px;letter-spacing:3px}
+.intro-quote{font-size:11px;letter-spacing:1.5px;margin-top:8px}
+.intro-icon{width:45px;height:45px;font-size:9px}
+}
+
+@media (max-width:360px){
+/* VERY SMALL MOBILE */
+.logo-text h1{font-size:1rem}
+.btn{font-size:0.7rem;padding:5px 8px;min-width:90px}
+.month-calendar{grid-template-columns:1fr}
 .month-day-card{min-height:auto}
-.month-detail-header{flex-direction:column;align-items:flex-start;gap:10px}
-.month-detail-close{position:absolute;top:15px;right:15px}
-.intro-container{width:280px;height:280px}
-.intro-brand .intro-title{font-size:28px}
-.habit-table td,.habit-table th{padding:4px;font-size:0.75rem}
+.intro-container{width:min(240px,70vw);height:min(240px,70vw)}
+.intro-brand .intro-title{font-size:24px}
+.intro-icon{width:40px;height:40px;font-size:8px}
 }
 </style>
 </head>
