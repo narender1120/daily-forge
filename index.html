@@ -291,6 +291,16 @@ body::after{
 .day-card:nth-child(6){animation-delay:0.3s}
 .day-card:nth-child(7){animation-delay:0.35s}
 
+.card-scrollable-content{
+  overflow-y:auto;
+  max-height:180px;
+  padding-right:5px;
+}
+.card-scrollable-content::-webkit-scrollbar{width:4px}
+.card-scrollable-content::-webkit-scrollbar-track{background:rgba(139,92,246,0.1);border-radius:10px}
+.card-scrollable-content::-webkit-scrollbar-thumb{background:rgba(139,92,246,0.5);border-radius:10px}
+.card-scrollable-content::-webkit-scrollbar-thumb:hover{background:rgba(139,92,246,0.7)}
+
 .day-card::before{
   content:'';
   position:absolute;
@@ -371,13 +381,25 @@ body::after{
 .chart-percent{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;pointer-events:none;z-index:10}
 
 .card-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;position:relative;z-index:1}
-.stat-box{background:rgba(10,1,24,.5);padding:4px;border-radius:5px;text-align:center;border:1px solid rgba(139,92,246,.2)}
+.stat-box{background:rgba(10,1,24,.5);padding:4px;border-radius:5px;text-align:center;border:1px solid rgba(139,92,246,.2);transition:all .3s}
+.stat-box:hover{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.5);transform:scale(1.05)}
 .stat-val{font-size:0.75rem;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .stat-lbl{font-size:0.55rem;color:#a78bfa;margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
 
-.card-tasks{background:#000000;border-radius:8px;padding:5px;max-height:140px;min-height:140px;overflow:hidden;border:1.5px solid rgba(139,92,246,.3);flex:1;position:relative;z-index:1}
-.card-tasks::-webkit-scrollbar{width:4px}
-.card-tasks::-webkit-scrollbar-thumb{background:linear-gradient(135deg,#8b5cf6,#10b981);border-radius:10px}
+.card-scrollable-content{
+  overflow-y:auto;
+  max-height:140px;
+  padding-right:3px;
+  position:relative;
+  z-index:1;
+}
+.card-scrollable-content::-webkit-scrollbar{width:4px}
+.card-scrollable-content::-webkit-scrollbar-track{background:rgba(139,92,246,0.1);border-radius:10px}
+.card-scrollable-content::-webkit-scrollbar-thumb{background:rgba(139,92,246,0.6);border-radius:10px}
+.card-scrollable-content::-webkit-scrollbar-thumb:hover{background:rgba(139,92,246,0.8)}
+
+.card-tasks{background:#000000;border-radius:8px;padding:5px;border:1.5px solid rgba(139,92,246,.3);position:relative;z-index:1}
+
 
 .task-mini{display:flex;align-items:center;gap:5px;padding:6px;margin-bottom:4px;background:#000000;border-radius:5px;transition:all .3s;border:1px solid rgba(139,92,246,.3)}
 .task-mini:hover{background:rgba(139,92,246,.2);transform:translateX(3px);border-color:rgba(139,92,246,.6)}
@@ -2095,16 +2117,18 @@ function renderCards(){
           <div class="chart-percent">${overall}%</div>
         </div>
         <div class="card-stats">
-          <div class="stat-box">
+          <div class="stat-box" onclick="showDayHabits('${ds}')" style="cursor:pointer">
             <div class="stat-val">${hPer}%</div>
             <div class="stat-lbl">Habits</div>
           </div>
-          <div class="stat-box">
+          <div class="stat-box" onclick="showDayTasks('${ds}')" style="cursor:pointer">
             <div class="stat-val">${tPer}%</div>
             <div class="stat-lbl">Tasks</div>
           </div>
         </div>
-        <div class="card-tasks">${tasksHTML}</div>
+        <div class="card-scrollable-content">
+          <div class="card-tasks">${tasksHTML}</div>
+        </div>
       </div>
     `;
   }).join('');
@@ -2141,6 +2165,61 @@ function renderCards(){
       }
     });
   },100);
+}
+
+function showDayTasks(dateStr){
+  const date=new Date(dateStr);
+  const dayTasks=tasks.filter(t=>t.date===dateStr);
+  
+  const modal=document.createElement('div');
+  modal.className='modal active';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:100000;display:flex;align-items:center;justify-content:center';
+  modal.innerHTML=`
+    <div style="background:rgba(5,2,15,.98);border:2px solid rgba(139,92,246,.6);border-radius:16px;padding:30px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto">
+      <div style="font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:20px;text-align:center">${daysFull[date.getDay()]}, ${date.getDate()} ${monthsFull[date.getMonth()]}</div>
+      <div style="margin-bottom:20px">
+        ${dayTasks.length>0?dayTasks.map(t=>`
+          <div class="task-mini ${t.done?'done':''} ${t.important?'important':''}" style="margin-bottom:8px" onclick="toggleTask('${t.id}');this.parentElement.parentElement.parentElement.remove();renderCards()">
+            <div class="task-mini-check ${t.done?'done':''}">${t.done?'✓':''}</div>
+            <div class="task-mini-text">${t.text}</div>
+          </div>
+        `).join(''):'<div style="color:#64748b;text-align:center;padding:20px">No tasks for this day</div>'}
+      </div>
+      <button style="width:100%;padding:12px;border:none;border-radius:10px;background:rgba(139,92,246,.15);color:#c4b5fd;border:1.5px solid rgba(139,92,246,.3);font-weight:700;cursor:pointer" onclick="this.closest('div').parentElement.remove()">Close</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove()});
+}
+
+function showDayHabits(dateStr){
+  const date=new Date(dateStr);
+  
+  const habitsHtml=habits.map(h=>{
+    const status=h.completions[dateStr]||'';
+    return`
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:8px;margin-bottom:6px">
+        <div style="font-size:1.3rem">${h.emoji}</div>
+        <div style="flex:1;font-size:0.9rem;font-weight:600;color:#cbd5e1">${h.name}</div>
+        <div style="width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:900;${status==='checked'?'background:#22c55e;color:#fff':status==='skipped'?'background:#fbbf24;color:#0f172a':status==='failed'?'background:#ef4444;color:#fff':'background:rgba(139,92,246,.2);color:#8b5cf6'}">${status==='checked'?'✓':status==='skipped'?'⊘':status==='failed'?'✗':''}</div>
+      </div>
+    `;
+  }).join('');
+  
+  const modal=document.createElement('div');
+  modal.className='modal active';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:100000;display:flex;align-items:center;justify-content:center';
+  modal.innerHTML=`
+    <div style="background:rgba(5,2,15,.98);border:2px solid rgba(139,92,246,.6);border-radius:16px;padding:30px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto">
+      <div style="font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:20px;text-align:center">${daysFull[date.getDay()]}, ${date.getDate()} ${monthsFull[date.getMonth()]}</div>
+      <div style="margin-bottom:20px">
+        ${habits.length>0?habitsHtml:'<div style="color:#64748b;text-align:center;padding:20px">No habits tracked</div>'}
+      </div>
+      <button style="width:100%;padding:12px;border:none;border-radius:10px;background:rgba(139,92,246,.15);color:#c4b5fd;border:1.5px solid rgba(139,92,246,.3);font-weight:700;cursor:pointer" onclick="this.closest('div').parentElement.remove()">Close</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove()});
 }
 
 function renderMonthly(){
@@ -2187,7 +2266,7 @@ function showMonthDetail(monthIndex,monthName,year){
   
   for(let day=1;day<=daysInMonth;day++){
     const date=new Date(year,monthIndex,day);
-    const ds=date.toISOString().split('T')[0];
+    const ds=`${year}-${String(monthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const dayName=daysShort[date.getDay()];
     const isToday=date.toDateString()===todayDate.toDateString();
     
