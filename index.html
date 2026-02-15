@@ -807,7 +807,8 @@ body::after{
 .logo-text h1{font-size:1.4rem}
 .top-actions{width:100%;justify-content:center;flex-wrap:wrap;gap:8px}
 .btn{flex:1 1 auto;min-width:140px;font-size:0.85rem;padding:8px 14px}
-.week-bar{padding:10px;gap:15px}
+.week-bar{grid-template-columns:1fr;padding:10px;gap:15px}
+.week-quote{text-align:center}
 .week-text{font-size:0.95rem}
 .top-section{gap:12px}
 .graph-container{height:220px}
@@ -832,7 +833,8 @@ body{padding:12px}
 .logo-text h1{font-size:1.2rem}
 .date-info{font-size:0.75rem}
 .btn{min-width:120px;font-size:0.8rem;padding:7px 12px}
-.week-bar{flex-direction:column;gap:10px;padding:10px}
+.week-bar{grid-template-columns:1fr;gap:10px;padding:10px}
+.week-controls{flex-direction:column;gap:10px}
 .cards-row{grid-template-columns:repeat(2,1fr);gap:8px}
 .day-card{padding:12px}
 .card-chart{height:110px}
@@ -1375,6 +1377,14 @@ function init(){
 }
 
 function startQuoteRotation(){
+  const quoteElement=document.getElementById('weekQuote');
+  
+  // Safety check - element exists
+  if(!quoteElement){
+    console.error('weekQuote element not found');
+    return;
+  }
+  
   const quotes=[
     "FORGE YOURSELF",
     "Built on Discipline. Driven by Growth. Sustained by Consistency.",
@@ -1385,15 +1395,15 @@ function startQuoteRotation(){
     "Consistency Every Day. Growth for Life."
   ];
   let currentQuoteIndex=0;
-  const quoteElement=document.getElementById('weekQuote');
   
   function typeWriterQuote(text){
+    if(!quoteElement) return;
     quoteElement.textContent='';
     let charIndex=0;
     const typingSpeed=50;
     
     function typeChar(){
-      if(charIndex<text.length){
+      if(charIndex<text.length && quoteElement){
         quoteElement.textContent+=text.charAt(charIndex);
         charIndex++;
         setTimeout(typeChar,typingSpeed);
@@ -1403,8 +1413,10 @@ function startQuoteRotation(){
   }
   
   function rotateQuote(){
+    if(!quoteElement) return;
     quoteElement.classList.add('fade-out');
     setTimeout(()=>{
+      if(!quoteElement) return;
       currentQuoteIndex=(currentQuoteIndex+1)%quotes.length;
       quoteElement.classList.remove('fade-out');
       typeWriterQuote(quotes[currentQuoteIndex]);
