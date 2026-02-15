@@ -91,13 +91,13 @@ body::after{
 
 .logo-section{display:flex;align-items:center;gap:12px}
 .logo-icon{
-  width:50px;
-  height:50px;
+  width:60px;
+  height:60px;
   display:flex;
   align-items:center;
   justify-content:center;
-  animation:pulse 2s infinite;
   filter:drop-shadow(0 0 15px rgba(139,92,246,.8));
+  position:relative;
 }
 
 .logo-icon svg{
@@ -105,11 +105,21 @@ body::after{
   height:100%;
 }
 
+.spinning-ring{
+  animation:spinRing 20s linear infinite;
+  transform-origin:center;
+}
+
+@keyframes spinRing{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
 @keyframes logoGlow{
   0%,100%{filter:drop-shadow(0 0 10px rgba(139,92,246,.6)) drop-shadow(0 0 20px rgba(139,92,246,.4))}
   50%{filter:drop-shadow(0 0 20px rgba(139,92,246,.9)) drop-shadow(0 0 35px rgba(139,92,246,.6))}
 }
-.logo-text h1{font-family:'Poppins',sans-serif;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1.5px}
+.logo-text h1{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px}
 .date-info{font-size:0.85rem;color:#a78bfa;font-weight:600;margin-top:3px}
 
 .top-actions{display:flex;gap:10px;flex-wrap:wrap}
@@ -125,7 +135,10 @@ body::after{
 .btn-subjects{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
 .btn-subjects:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,92,246,.5)}
 
-.week-bar{display:flex;align-items:center;justify-content:center;gap:20px;padding:12px;background:rgba(0,0,0,.98);backdrop-filter:blur(10px);border-radius:12px;margin-bottom:15px;border:1.5px solid rgba(139,92,246,.4);box-shadow:0 4px 15px rgba(0,0,0,.5)}
+.week-bar{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:12px 20px;background:rgba(0,0,0,.98);backdrop-filter:blur(10px);border-radius:12px;margin-bottom:15px;border:1.5px solid rgba(139,92,246,.4);box-shadow:0 4px 15px rgba(0,0,0,.5)}
+.week-quote{font-size:0.95rem;font-weight:600;color:#c4b5fd;letter-spacing:1.5px;transition:opacity 0.5s ease;min-height:24px;font-family:'Inter',sans-serif;font-style:italic;display:flex;align-items:center}
+.week-quote.fade-out{opacity:0}
+.week-controls{display:flex;align-items:center;justify-content:center;gap:20px}
 .week-arrow{background:rgba(139,92,246,.2);border:2px solid rgba(139,92,246,.4);color:#c4b5fd;width:40px;height:40px;border-radius:50%;cursor:pointer;transition:all .3s;font-size:1.3rem;display:flex;align-items:center;justify-content:center;font-weight:900}
 .week-arrow:hover{transform:scale(1.15) rotate(10deg);box-shadow:0 0 20px rgba(139,92,246,.6);background:rgba(139,92,246,.3)}
 .week-text{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -427,6 +440,144 @@ body::after{
 .task-mini-del:hover{background:rgba(239,68,68,.5);transform:scale(1.05)}
 
 .no-tasks{text-align:center;color:#94a3b8;font-size:0.7rem;padding:12px;font-weight:600}
+
+.important-tasks-container{
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(15px);
+  border:2px solid rgba(239,68,68,.6);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 8px 32px rgba(239,68,68,.4),inset 0 1px 0 rgba(239,68,68,.5);
+  animation:fadeInUp .7s;
+}
+
+.important-tasks-header{
+  font-size:1.2rem;
+  font-weight:900;
+  background:linear-gradient(135deg,#ef4444,#f87171);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:15px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.important-day-group{
+  margin-bottom:20px;
+}
+
+.important-day-title{
+  font-size:0.95rem;
+  font-weight:800;
+  background:linear-gradient(135deg,#8b5cf6,#c4b5fd);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:10px;
+  padding-bottom:8px;
+  border-bottom:2px solid rgba(139,92,246,.3);
+}
+
+.important-task-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  background:rgba(239,68,68,.08);
+  border:1.5px solid rgba(239,68,68,.3);
+  border-radius:10px;
+  margin-bottom:8px;
+  transition:all .3s;
+}
+
+.important-task-item:hover{
+  background:rgba(239,68,68,.15);
+  transform:translateX(5px);
+  border-color:rgba(239,68,68,.5);
+}
+
+.important-task-check{
+  width:20px;
+  height:20px;
+  border:2px solid rgba(239,68,68,.6);
+  border-radius:4px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.8rem;
+  flex-shrink:0;
+  transition:all .3s;
+  font-weight:900;
+  background:rgba(5,2,15,.8);
+  box-shadow:0 0 8px rgba(239,68,68,.3);
+}
+
+.important-task-check:hover{
+  border-color:#ef4444;
+  transform:scale(1.15);
+  box-shadow:0 0 15px rgba(239,68,68,.5);
+}
+
+.important-task-check.done{
+  background:linear-gradient(135deg,#ef4444,#f87171);
+  border-color:#ef4444;
+  color:#fff;
+  box-shadow:0 0 20px rgba(239,68,68,.6);
+}
+
+.important-task-text{
+  flex:1;
+  color:#f1f5f9;
+  font-weight:700;
+  line-height:1.4;
+  font-size:0.9rem;
+}
+
+.important-task-item.done .important-task-text{
+  text-decoration:line-through;
+  color:#64748b;
+  font-weight:400;
+}
+
+.important-task-actions{
+  display:flex;
+  gap:5px;
+}
+
+.important-task-rename{
+  background:rgba(139,92,246,.3);
+  border:none;
+  color:#a78bfa;
+  cursor:pointer;
+  font-size:0.8rem;
+  padding:4px 8px;
+  border-radius:5px;
+  font-weight:900;
+  transition:all .3s;
+}
+
+.important-task-rename:hover{
+  background:rgba(139,92,246,.5);
+  transform:scale(1.05);
+}
+
+.important-task-del{
+  background:rgba(239,68,68,.4);
+  border:none;
+  color:#fff;
+  cursor:pointer;
+  font-size:0.8rem;
+  padding:4px 8px;
+  border-radius:5px;
+  font-weight:900;
+  transition:all .3s;
+}
+
+.important-task-del:hover{
+  background:rgba(239,68,68,.6);
+  transform:scale(1.05);
+}
 
 .empty-msg{text-align:center;padding:20px;color:#64748b;font-size:0.85rem}
 
@@ -797,7 +948,8 @@ body{padding:10px}
 .intro-flash{position:absolute;top:50%;left:50%;width:20px;height:20px;border-radius:50%;background:#a78bfa;transform:translate(-50%,-50%) scale(0);opacity:0}
 .intro-brand{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:0}
 .intro-brand .intro-title{font-family:Cinzel,serif;font-size:52px;letter-spacing:8px;background:linear-gradient(135deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:0 0 40px rgba(139,92,246,.7)}
-.intro-quote{margin-top:10px;font-family:Poppins,sans-serif;font-size:16px;color:#c4b5fd;letter-spacing:3px}
+.intro-quote{margin-top:10px;font-family:Poppins,sans-serif;font-size:16px;color:#c4b5fd;letter-spacing:3px;transition:opacity 0.8s ease}
+.intro-quote.fade-out{opacity:0}
 .app-wrapper{display:none;opacity:0}
 .app-wrapper.show{display:block;animation:appShow 0.8s forwards}
 @keyframes appShow{from{opacity:0}to{opacity:1}}
@@ -816,7 +968,7 @@ body{padding:10px}
 <div class="intro-icon ii6">ACCOUNTABILITY</div>
 <div class="intro-brand" id="introBrand">
 <div class="intro-title">DAILY FORGE</div>
-<div class="intro-quote">FORGE YOURSELF</div>
+<div class="intro-quote" id="rotatingQuote">FORGE YOURSELF</div>
 </div>
 </div>
 </div>
@@ -895,6 +1047,9 @@ if(typeof init==='function')init();
 </feMerge>
 </filter>
 </defs>
+
+<!-- Spinning outer ring -->
+<circle cx="50" cy="50" r="42" fill="none" stroke="url(#hexGrad)" stroke-width="1.5" opacity="0.4" class="spinning-ring" stroke-dasharray="5,5"/>
 
 <!-- Center Glow (darkness to light) -->
 <circle cx="50" cy="50" r="45" fill="url(#centerGlow)">
@@ -995,9 +1150,12 @@ FORGE
 </div>
 
 <div class="week-bar">
+<div class="week-quote" id="weekQuote">FORGE YOURSELF</div>
+<div class="week-controls">
 <button class="week-arrow" onclick="changeWeek(-1)">‹</button>
 <div class="week-text" id="weekText"></div>
 <button class="week-arrow" onclick="changeWeek(1)">›</button>
+</div>
 </div>
 
 <div class="top-section">
@@ -1018,6 +1176,8 @@ FORGE
 </div>
 
 <div class="cards-row" id="cardsRow"></div>
+
+<div id="importantTasksSection" style="margin-top:20px"></div>
 
 </div>
 
@@ -1211,6 +1371,47 @@ function init(){
   updateWeek();
   renderAll();
   setupIdleDetection();
+  startQuoteRotation();
+}
+
+function startQuoteRotation(){
+  const quotes=[
+    "FORGE YOURSELF",
+    "Built on Discipline. Driven by Growth. Sustained by Consistency.",
+    "Discipline Creates Growth. Consistency Makes It Permanent.",
+    "Execute with Discipline. Grow with Consistency.",
+    "Accountability Fuels Discipline. Discipline Builds Growth.",
+    "Patience + Execution = Real Growth.",
+    "Consistency Every Day. Growth for Life."
+  ];
+  let currentQuoteIndex=0;
+  const quoteElement=document.getElementById('weekQuote');
+  
+  function typeWriterQuote(text){
+    quoteElement.textContent='';
+    let charIndex=0;
+    const typingSpeed=50;
+    
+    function typeChar(){
+      if(charIndex<text.length){
+        quoteElement.textContent+=text.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeChar,typingSpeed);
+      }
+    }
+    typeChar();
+  }
+  
+  function rotateQuote(){
+    quoteElement.classList.add('fade-out');
+    setTimeout(()=>{
+      currentQuoteIndex=(currentQuoteIndex+1)%quotes.length;
+      quoteElement.classList.remove('fade-out');
+      typeWriterQuote(quotes[currentQuoteIndex]);
+    },500);
+  }
+  
+  setInterval(rotateQuote,30000);
 }
 
 function setupIdleDetection(){
@@ -2088,6 +2289,7 @@ function renderCards(){
     const hPer=habits.length>0?Math.round((hDone/habits.length)*100):0;
     
     const dayTasks=tasks.filter(t=>t.date===ds);
+    const normalTasks=dayTasks.filter(t=>!t.important);
     const tDone=dayTasks.filter(t=>t.done).length;
     const tPer=dayTasks.length>0?Math.round((tDone/dayTasks.length)*100):0;
     
@@ -2095,7 +2297,7 @@ function renderCards(){
     const done=hDone+tDone;
     const overall=total>0?Math.round((done/total)*100):0;
     
-    const tasksHTML=dayTasks.length>0?dayTasks.map(t=>`
+    const tasksHTML=normalTasks.length>0?normalTasks.map(t=>`
       <div class="task-mini ${t.done?'done':''} ${t.important?'important':''}">
         <div class="task-mini-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')">${t.done?'✓':''}</div>
         <div class="task-mini-text" title="${t.text}">${t.text}</div>
@@ -2165,6 +2367,59 @@ function renderCards(){
       }
     });
   },100);
+  
+  // Render Important Tasks Section
+  renderImportantTasks();
+}
+
+function renderImportantTasks(){
+  const section=document.getElementById('importantTasksSection');
+  const dates=getWeekDates();
+  
+  // Group important tasks by date
+  const importantByDate={};
+  dates.forEach(d=>{
+    const ds=d.toISOString().split('T')[0];
+    const importantTasks=tasks.filter(t=>t.date===ds && t.important);
+    if(importantTasks.length>0){
+      importantByDate[ds]={date:d,tasks:importantTasks};
+    }
+  });
+  
+  // If no important tasks, hide section
+  if(Object.keys(importantByDate).length===0){
+    section.innerHTML='';
+    return;
+  }
+  
+  // Build HTML
+  let html='<div class="important-tasks-container">';
+  html+=`<div class="important-tasks-header"><span>⭐</span>Important Tasks This Week</div>`;
+  
+  Object.keys(importantByDate).sort().forEach(ds=>{
+    const data=importantByDate[ds];
+    const d=data.date;
+    html+=`<div class="important-day-group">`;
+    html+=`<div class="important-day-title">${daysFull[d.getDay()]}, ${d.getDate()} ${monthsFull[d.getMonth()]}</div>`;
+    
+    data.tasks.forEach(t=>{
+      html+=`
+        <div class="important-task-item ${t.done?'done':''}">
+          <div class="important-task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')">${t.done?'✓':''}</div>
+          <div class="important-task-text">${t.text}</div>
+          <div class="important-task-actions">
+            <button class="important-task-rename" onclick="renameTask('${t.id}')">✏️</button>
+            <button class="important-task-del" onclick="deleteTask('${t.id}')">×</button>
+          </div>
+        </div>
+      `;
+    });
+    
+    html+=`</div>`;
+  });
+  
+  html+='</div>';
+  section.innerHTML=html;
 }
 
 function showDayTasks(dateStr){
